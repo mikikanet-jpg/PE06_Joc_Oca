@@ -91,21 +91,21 @@ public class PE06_Joc_Oca {
             
         // 9. OCA
         if (esOca(oques, casella)) {
-            System.out.println("Oca! De oca en oca i tiro perquè em toca.");
+            System.out.println(GROC + "Oca! De oca en oca i tiro perquè em toca." + RESET);
             posicio[jugador] = seguentOca(oques, casella);
             repetirTorn = true;
         }
             
         // 10. PONT
         else if (casella == 6 || casella == 12) {
-            System.out.println("Pont! Vas a l'altre pont.");
+            System.out.println(GROC + "Pont! Vas a l'altre pont." + RESET);
             posicio[jugador] = (casella == 6 ? 12 : 6);
             repetirTorn = true;
         }
 
         // 11. FONDA
         else if (casella == 19) {
-            System.out.println("Fonda! Perds un torn.");
+            System.out.println(GROC + "Fonda! Perds un torn." + RESET);
             penalitzacio[jugador] = 1;
         }
 
@@ -113,20 +113,54 @@ public class PE06_Joc_Oca {
         else if (primeraTirada[jugador]) {
             if ((d1 == 3 && d2 == 6) || (d1 == 6 && d2 == 3)) {
                 posicio[jugador] = 26;
-                System.out.println("Daus 3-6! Vas a la 26 i tornes a tirar.");
+                System.out.println(VERD + "Daus 3-6! Vas a la 26 i tornes a tirar." + RESET);
                 repetirTorn = true;
             }
             if ((d1 == 4 && d2 == 5) || (d1 == 5 && d2 == 4)) {
                 posicio[jugador] = 53;
-                System.out.println("Daus 4-5! Vas a la 53 i tornes a tirar.");
+                System.out.println(VERD + "Daus 4-5! Vas a la 53 i tornes a tirar." + RESET);
                 repetirTorn = true;
             }
         }
 
+        // 13. POU
+            else if (casella == POU) {
+                System.out.println(GROC + "Has caigut al pou!" + RESET);
+                if (jugadorPou != -1 && jugadorPou != jugador) {
+                    penalitzacio[jugadorPou] = 0;
+                    System.out.println(GROC + "Un altre jugador surt del pou." + RESET);
+                }
+                jugadorPou = jugador;
+                penalitzacio[jugador] = 2;
+            }
+
+        // 14. LABERINT
+            else if (casella == 42) {
+                System.out.println(GROC + "Laberint! Tornes a la 39." + RESET);
+                posicio[jugador] = 39;
+            }
+        
+        // 15. PRESÓ
+            else if (casella == 52) {
+                System.out.println(GROC + "Presó! Perds 3 torns." + RESET);
+                penalitzacio[jugador] = 3;
+            }
+        
+        // 16. MORT
+            else if (casella == 58) {
+                System.out.println(ROIG + "La mort! Tornes a l'inici." + RESET);
+                posicio[jugador] = 0;
+            }
+
+        primeraTirada[jugador] = false;
+
+            if (!repetirTorn) {
+                torn++;
+            }
 
         }
             
-            
+        j.close();
     }
 
     // ========================== METODES ============================== //
@@ -160,7 +194,7 @@ public class PE06_Joc_Oca {
     }
 
     public void esperarTiro(Scanner j) {
-        System.out.println("Escriu 'tiro': ");
+        System.out.println("Escriu qualsevol cosa per tirar els daus! ");
         j.next();
     }
 
