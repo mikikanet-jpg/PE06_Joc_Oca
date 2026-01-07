@@ -17,11 +17,11 @@ public class PE06_Joc_Oca {
     }
 
     public void principal () {
-        //Demanar Jugadors
+        //1. Demanar Jugadors
         Scanner j = new Scanner(System.in);
         int numJug = demanarJugadors(j);
 
-        //Dades dels jugasors (Amb arrays)
+        //2. Dades dels jugasors (Amb arrays)
         String[] noms = new String[numJug];
         int[] posicio = new int[numJug];
         int[] penalitzacio = new int[numJug];
@@ -33,9 +33,34 @@ public class PE06_Joc_Oca {
             penalitzacio[i] = 0;
         }
 
-        //Demanar noms 
+        //3. Demanar noms 
         demanarNoms(j, noms);
 
+        //Oques
+        int[] oques = {5,9,14,18,23,27,32,36,41,45,50,54,59};
+
+        boolean guanyador = false;
+        int torn = 0;
+        int jugadorPou = -1;
+
+        //4. Bucle Principal
+        while (!guanyador) {
+            
+            int jugador = torn % numJug;
+
+            System.out.println("\n--------------------------------");
+            System.out.println("Torn del jugador " + (jugador+1) + ": " + noms[jugador]);
+            
+            //5. Penalitzacions
+            if (penalitzacio[jugador] > 0) {
+                System.out.println(ROIG + "No pots tirar. Torns restants: " + penalitzacio[jugador] + RESET);
+                penalitzacio[jugador]--;
+                torn++;
+                continue;
+            }
+
+            esperarTiro(j);
+        }
 
     }
 
@@ -66,4 +91,11 @@ public class PE06_Joc_Oca {
             noms[i] = j.next();
         }
     }
+
+    public void esperarTiro(Scanner j) {
+        System.out.println("Escriu 'tiro': ");
+        j.next();
+    }
+
+
 }
