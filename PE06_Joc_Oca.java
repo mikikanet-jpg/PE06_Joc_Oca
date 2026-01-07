@@ -6,6 +6,7 @@ import Practica6.PE06_Joc_Oca;
 public class PE06_Joc_Oca {
     public static final String ROIG    = "\u001B[31m";
     public static final String RESET   = "\u001B[0m";
+    public static final String GROC  = "\u001B[33m";
 
     //CONSTANST
     public static final int META = 63;
@@ -60,9 +61,26 @@ public class PE06_Joc_Oca {
             }
 
             esperarTiro(j);
+
+            // 6. DAUS
+            int d1 = tirarDau();
+            int d2 = (posicio[jugador] >= 60) ? 0 : tirarDau();
+            int suma = d1 + d2;
+
+            System.out.println("Has obtingut " + d1 + " i " + d2 + " = " + suma);
+
+            // 7. MOVIMENT AMB RETROCÉS
+            posicio[jugador] += suma;
+            if (posicio[jugador] > META) {
+                int sobra = posicio[jugador] - META;
+                posicio[jugador] = META - sobra;
+                System.out.println(GROC + "Has sobrepassat el final, retrocedeixes a " + posicio[jugador] + RESET);
+            }
         }
 
     }
+
+    // ========================== METODES ============================== //
 
     public int demanarJugadors(Scanner j) {
         int n = 0;
@@ -95,6 +113,16 @@ public class PE06_Joc_Oca {
     public void esperarTiro(Scanner j) {
         System.out.println("Escriu 'tiro': ");
         j.next();
+    }
+
+    
+    public int tirarDau() {
+        return (int)(Math.random()*6)+1;
+    }
+
+    public boolean esOca(int[] oques, int casella) {
+        for (int o : oques) if (o == casella) return true;
+        return false;
     }
 
 
