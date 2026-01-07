@@ -7,6 +7,7 @@ public class PE06_Joc_Oca {
     public static final String ROIG    = "\u001B[31m";
     public static final String RESET   = "\u001B[0m";
     public static final String GROC  = "\u001B[33m";
+    public static final String VERD  = "\u001B[32m";
 
     //CONSTANST
     public static final int META = 63;
@@ -47,37 +48,85 @@ public class PE06_Joc_Oca {
         //4. Bucle Principal
         while (!guanyador) {
             
-            int jugador = torn % numJug;
+        int jugador = torn % numJug;
 
-            System.out.println("\n--------------------------------");
-            System.out.println("Torn del jugador " + (jugador+1) + ": " + noms[jugador]);
+        System.out.println("\n--------------------------------");
+        System.out.println("Torn del jugador " + (jugador+1) + ": " + noms[jugador]);
             
-            //5. Penalitzacions
-            if (penalitzacio[jugador] > 0) {
-                System.out.println(ROIG + "No pots tirar. Torns restants: " + penalitzacio[jugador] + RESET);
-                penalitzacio[jugador]--;
-                torn++;
-                continue;
+        //5. Penalitzacions
+        if (penalitzacio[jugador] > 0) {
+            System.out.println(ROIG + "No pots tirar. Torns restants: " + penalitzacio[jugador] + RESET);
+            penalitzacio[jugador]--;
+            torn++;
+            continue;
+        }
+
+        esperarTiro(j);
+
+        // 6. DAUS
+        int d1 = tirarDau();
+        int d2 = (posicio[jugador] >= 60) ? 0 : tirarDau();
+        int suma = d1 + d2;
+
+        System.out.println("Has obtingut " + d1 + " i " + d2 + " = " + suma);
+
+        // 7. MOVIMENT AMB RETROCÉS
+        posicio[jugador] += suma;
+        if (posicio[jugador] > META) {
+            int sobra = posicio[jugador] - META;
+            posicio[jugador] = META - sobra;
+            System.out.println(GROC + "Has sobrepassat el final, retrocedeixes a " + posicio[jugador] + RESET);
+        }
+
+        // 8. COMPROVAR META
+        if (posicio[jugador] == META) {
+            System.out.println(VERD + noms[jugador] + " HA GUANYAT!" + RESET);
+            break;
+        }
+
+        int casella = posicio[jugador];
+        System.out.println("Casella " + casella);
+
+        boolean repetirTorn = false;
+            
+        // 9. OCA
+        if (esOca(oques, casella)) {
+            System.out.println("Oca! De oca en oca i tiro perquè em toca.");
+            posicio[jugador] = seguentOca(oques, casella);
+            repetirTorn = true;
+        }
+            
+        // 10. PONT
+        else if (casella == 6 || casella == 12) {
+            System.out.println("Pont! Vas a l'altre pont.");
+            posicio[jugador] = (casella == 6 ? 12 : 6);
+            repetirTorn = true;
+        }
+
+        // 11. FONDA
+        else if (casella == 19) {
+            System.out.println("Fonda! Perds un torn.");
+            penalitzacio[jugador] = 1;
+        }
+
+        // 12. DAUS 3-6 / 4-5
+        else if (primeraTirada[jugador]) {
+            if ((d1 == 3 && d2 == 6) || (d1 == 6 && d2 == 3)) {
+                posicio[jugador] = 26;
+                System.out.println("Daus 3-6! Vas a la 26 i tornes a tirar.");
+                repetirTorn = true;
             }
-
-            esperarTiro(j);
-
-            // 6. DAUS
-            int d1 = tirarDau();
-            int d2 = (posicio[jugador] >= 60) ? 0 : tirarDau();
-            int suma = d1 + d2;
-
-            System.out.println("Has obtingut " + d1 + " i " + d2 + " = " + suma);
-
-            // 7. MOVIMENT AMB RETROCÉS
-            posicio[jugador] += suma;
-            if (posicio[jugador] > META) {
-                int sobra = posicio[jugador] - META;
-                posicio[jugador] = META - sobra;
-                System.out.println(GROC + "Has sobrepassat el final, retrocedeixes a " + posicio[jugador] + RESET);
+            if ((d1 == 4 && d2 == 5) || (d1 == 5 && d2 == 4)) {
+                posicio[jugador] = 53;
+                System.out.println("Daus 4-5! Vas a la 53 i tornes a tirar.");
+                repetirTorn = true;
             }
         }
 
+
+        }
+            
+            
     }
 
     // ========================== METODES ============================== //
@@ -125,5 +174,8 @@ public class PE06_Joc_Oca {
         return false;
     }
 
-
+    public int seguentOca(int[] oques, int casella) {
+        for (int o : oques) if (o > casella) return o;
+        return casella;
+    }
 }
